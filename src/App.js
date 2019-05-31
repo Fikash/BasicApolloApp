@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { Query } from "react-apollo";
+import { gql } from "apollo-boost";
 import logo from "./logo.svg";
 import "./App.css";
 
@@ -18,7 +20,7 @@ class App extends Component {
         },
         {
           title: "Post 3",
-          text: "Third is the nerdy bird"
+          text: "Third text box is here, wow"
         }
       ],
       selectedPost: "None"
@@ -50,6 +52,32 @@ class App extends Component {
   }
 }
 
+const ExchangeRates = () => (
+  <Query
+    query={gql`
+        {
+          rates(currency: "USD") {
+            currency
+            rate
+          }
+        }
+      `}
+  >
+    {({ loading, error, data }) => {
+      if (loading) return <p>Loading...</p>;
+      if (error) return <p>Error :(</p>;
+
+      return data.rates.map(({ currency, rate }) => (
+        <div key={currency}>
+          {/* <p>{currency}: {rate}</p> */}
+          <InnerPost currency={currency} rate={rate} />
+        </div>
+      ));
+    }}
+  </Query>
+);
+
+
 const TitleDiv = () => {
   // console.log(props);
   return (
@@ -74,6 +102,7 @@ const PostsContainer = props => {
 
         />
       ))}
+      <ExchangeRates />
     </div>
   );
 };
@@ -94,16 +123,18 @@ const Post = props => {
       <p>{props.title}</p>
       <p>{props.text}</p>
       <InnerPost />
-      <InnerPost />
-      <InnerPost />
     </div>
   );
 };
 
 const InnerPost = props => {
+  const { currency, rate } = props;
   return (
     <div>
-      <div style={{ backgroundColor: "orange", width: "50px", height: "50px" }}></div>
+      <div style={{ backgroundColor: "orange", width: "50px", height: "100px" }}>
+        <p><b>{currency}</b></p>
+        <p><b>{rate}</b></p>
+      </div>
     </div>
   );
 };

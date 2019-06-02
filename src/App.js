@@ -63,16 +63,20 @@ const ExchangeRates = () => (
         }
       `}
   >
-    {({ loading, error, data }) => {
+    {({ loading, error, data, refetch }) => {
       if (loading) return <p>Loading...</p>;
       if (error) return <p>Error :(</p>;
-
-      return data.rates.map(({ currency, rate }) => (
-        <div key={currency}>
-          {/* <p>{currency}: {rate}</p> */}
-          <InnerPost currency={currency} rate={rate} />
+      let arrayOfCurrencies = [];
+      data.rates.map(({ currency, rate }) => {
+        arrayOfCurrencies.push(<InnerPost currency={currency} rate={rate} />)
+      }
+      )
+      return /*data.rates.map(({ currency, rate }) =>*/ (
+        <div>
+          <button style={{ "height": "50px", "width": "100px" }} onClick={() => refetch()}>Refetch!</button>
+          {arrayOfCurrencies}
         </div>
-      ));
+      );
     }}
   </Query>
 );
@@ -130,11 +134,9 @@ const Post = props => {
 const InnerPost = props => {
   const { currency, rate } = props;
   return (
-    <div>
-      <div style={{ backgroundColor: "orange", width: "50px", height: "100px" }}>
-        <p><b>{currency}</b></p>
-        <p><b>{rate}</b></p>
-      </div>
+    <div style={{ backgroundColor: "orange", width: "100px", height: "100px" }}>
+      <p><b>{currency}</b></p>
+      <p><b>{rate}</b></p>
     </div>
   );
 };
